@@ -1,0 +1,461 @@
+/* ============================================================
+   T-Studio 체험 데모 — 실제 style_exam.css 톤 재현 (적응형)
+   실제 색/폰트/카드 스타일을 발췌·재현, 데모용으로 좁은 폭까지 적응형
+   ============================================================ */
+:root{
+  --primary-color:#4f46e5;
+  --primary-hover:#4338ca;
+  --accent-color:#16a085;
+  --bg-color:#F4F5FA;
+  --text-main:#111827;
+  --text-sub:#6b7280;
+  --border-color:#e5e7eb;
+  --divider-color:#b0b8c1;
+  --white:#ffffff;
+  --header-bg:#f8fafc;
+  --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;outline:none}
+html,body{height:100%;overscroll-behavior:contain}
+body{
+  font-family:'Pretendard',sans-serif;
+  color:var(--text-main);
+  background:var(--bg-color);
+  display:flex;flex-direction:column;min-height:100vh;
+}
+
+/* ---- 진행 스테퍼 ---- */
+.stepper{
+  background:var(--white);border-bottom:1px solid var(--border-color);
+  padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:30;
+}
+.stepper-label{display:flex;align-items:baseline;gap:8px}
+.step-no{
+  font-weight:800;color:var(--primary-color);font-size:14px;
+  background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:3px 9px;
+}
+.step-title{font-weight:700;font-size:15px;color:var(--text-main)}
+.stepper-track{display:flex;gap:6px;flex:1;min-width:120px}
+.stepper-track .seg{
+  flex:1;height:6px;border-radius:3px;background:#e5e7eb;transition:.2s;
+}
+.stepper-track .seg.active{background:var(--primary-color)}
+.stepper-track .seg.done{background:#a5b4fc}
+
+/* ---- 화면 ---- */
+.screens{flex:1;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.active{display:flex}
+
+/* ---- 작업 영역 (좌+우, 적응형) ---- */
+.workspace{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+  gap:16px;padding:18px;align-items:start;
+}
+.panel{min-width:0;display:flex;flex-direction:column;gap:12px}
+
+h2.panel-title{
+  font-size:17px;color:var(--text-main);font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+h2.panel-title::before{
+  content:'';width:4px;height:17px;background:var(--primary-color);border-radius:2px;
+}
+.sub-title{font-size:14px;font-weight:700;color:var(--text-main)}
+.sub-row{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}
+
+/* ---- 카드 ---- */
+.card-box{
+  background:var(--white);padding:16px;border-radius:12px;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border-color);
+}
+
+/* ---- 입력 폼 ---- */
+.input-row{display:flex;gap:12px;flex-wrap:wrap}
+.input-row + .input-row{margin-top:12px}
+.exam-meta{
+  background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;
+}
+.input-item{flex:1;min-width:120px;display:flex;flex-direction:column;gap:5px}
+label{font-size:12.5px;font-weight:600;color:#555}
+input[type="text"],input[type="date"],input[type="number"],select{
+  padding:9px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;width:100%;
+  font-family:inherit;background:var(--white);color:#334155;
+}
+input:focus,select:focus{border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.1)}
+
+/* ---- 버튼 ---- */
+.btn-row{display:flex;gap:8px}
+button.btn-act{
+  padding:9px 14px;border:none;border-radius:8px;font-weight:600;cursor:pointer;
+  transition:.2s;font-size:13.5px;box-shadow:0 1px 2px rgba(0,0,0,.05);white-space:nowrap;
+  font-family:inherit;
+}
+.btn-load{background:#fff;border:1px solid #cbd5e1;color:#475569;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.btn-load:hover{background:#f8fafc;border-color:#94a3b8;color:#1e293b}
+.btn-save{background:var(--accent-color);color:#fff}
+.btn-save:hover{background:#138a72}
+.btn-print{background:var(--primary-color);color:#fff}
+.btn-print:hover{background:var(--primary-hover)}
+.create-btn{width:100%;padding:15px;font-size:15px;margin-top:2px}
+
+/* ---- 출제 범위 표 ---- */
+.table-card{padding:0;overflow:hidden}
+.table-scroll-area{overflow:visible}
+table.input-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.input-table th{
+  position:sticky;top:0;z-index:5;padding:10px 4px;font-weight:600;color:#555;
+  background:var(--header-bg);border-bottom:1px solid #ccc;text-align:center;
+}
+.input-table td{padding:6px;border-bottom:1px solid #eee;text-align:center}
+.sep-right{border-right:2px solid var(--divider-color)!important}
+.editable input{
+  width:100%;text-align:center;padding:6px;border:1px solid #e2e8f0;border-radius:4px;
+  background:#fff;font-size:13px;
+}
+.editable input:focus{border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.1)}
+.readonly input{width:100%;text-align:center;border:none;background:transparent;font-weight:bold;color:var(--primary-color);font-size:14px}
+tfoot tr{background:#f1f5f9;font-weight:bold;position:sticky;bottom:0;z-index:5}
+tfoot td{padding:10px 6px;border-top:2px solid #cbd5e1;color:#333}
+#grand-total{color:var(--primary-color)}
+.total-label{text-align:right;padding-right:12px;color:#555}
+/* 불러오기 직후: 해당 학생 데이터 행 강조 + 부드럽게 등장 */
+.input-table tbody tr.row-loaded td{background:#eef2ff;animation:rowGlow 1.5s ease both}
+.input-table tbody tr.row-loaded{animation:rowReveal .5s ease both}
+@keyframes rowReveal{from{opacity:0}to{opacity:1}}
+@keyframes rowGlow{0%{background:#c7d2fe}100%{background:#eef2ff}}
+
+/* ---- 우측 미리보기 ---- */
+.preview-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.print-btns{display:flex;gap:6px;padding-bottom:4px}
+.mini-btn{padding:6px 11px;font-size:12px;font-weight:600;border-radius:6px;border:1px solid #cbd5e1;background:#fff;color:#475569;cursor:pointer;font-family:inherit;white-space:nowrap}
+.mini-btn:hover{background:#f8fafc;border-color:#94a3b8}
+.tab-index-container{display:flex;gap:4px;padding-left:8px;margin-bottom:-1px}
+.tab-index-btn{
+  padding:8px 16px 7px;background:#e5e7eb;border:1px solid #d1d5db;border-bottom:none;
+  border-radius:8px 8px 0 0;color:var(--text-sub);font-size:13px;font-weight:600;cursor:pointer;
+  position:relative;top:1px;font-family:inherit;
+}
+.tab-index-btn.active{background:var(--white);color:var(--primary-color);border-color:var(--border-color);border-bottom:1px solid var(--white);font-weight:700}
+.preview-card{
+  background:var(--white);border:1px solid var(--border-color);border-radius:12px;
+  box-shadow:var(--shadow-sm);overflow:hidden;min-height:360px;display:flex;flex-direction:column;
+}
+.tab-content{flex:1;padding:24px;background:#f9fafb;display:flex;flex-direction:column;align-items:center;overflow:visible}
+.empty-guide{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:#adb5bd;text-align:center}
+.guide-icon{font-size:46px;margin-bottom:14px;opacity:.5}
+.empty-guide h3{font-size:17px;color:#495057;margin-bottom:8px;font-weight:bold}
+.empty-guide p{font-size:13.5px;line-height:1.55;color:#868e96}
+
+/* ---- 생성된 시험지 (실제 input_preview 1페이지 양식 재현, 미리보기 폭에 맞춰 축소) ---- */
+.paper-scale{margin:0 auto}
+.paper{
+  width:210mm;min-height:297mm;background:#fff;box-sizing:border-box;
+  box-shadow:0 0 10px rgba(0,0,0,.3);transform-origin:top left;
+}
+.excel-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.excel-table td{border:none;vertical-align:middle;text-align:center;font-size:5pt;padding:0;word-break:break-all;color:#000}
+.merged{background:#fff}
+.border-thick-outer{border:none}
+.bt-thick{border-top:3px solid #000!important}
+.bb-thick{border-bottom:3px solid #000!important}
+.bl-thick{border-left:3px solid #000!important}
+.br-thick{border-right:3px solid #000!important}
+.f-page-odd{text-align:right!important;font-size:7mm!important;font-family:'Malgun Gothic',sans-serif}
+.f-code{text-align:center!important;font-size:3mm!important}
+.f-numb{text-align:left!important;font-size:3mm!important}
+.f-scr{text-align:right!important;padding-right:3mm!important;font-size:3mm!important}
+.f-page-d{text-align:center!important;font-size:3mm!important;font-family:'Malgun Gothic',sans-serif}
+.demo-q{font-size:4.2mm;line-height:1.6;color:#111;text-align:left;padding:3mm 2.5mm;font-family:'Pretendard',sans-serif}
+
+/* ---- 1단계 완료 버튼 ---- */
+.next-bar{padding:0 18px 22px;display:flex;justify-content:flex-end}
+.next-bar[hidden]{display:none}
+.next-btn{
+  background:var(--primary-color);color:#fff;border:none;border-radius:8px;
+  padding:13px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 6px -1px rgba(79,70,229,.3);transition:.2s;
+}
+.next-btn:hover{background:var(--primary-hover);transform:translateY(-1px)}
+
+/* ---- 토스트 ---- */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:#111827;color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;font-weight:500;
+  box-shadow:0 10px 25px -5px rgba(0,0,0,.4);opacity:0;transition:.3s;z-index:1000000003;max-width:88%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---- Driver.js 말풍선 톤 ---- */
+.driver-popover.demo-popover{
+  font-family:'Pretendard',sans-serif;border-radius:12px;
+  box-shadow:0 12px 30px -8px rgba(17,24,39,.45);max-width:300px;
+}
+.driver-popover.demo-popover .driver-popover-title{
+  font-size:15px;font-weight:800;color:var(--primary-color);
+}
+.driver-popover.demo-popover .driver-popover-description{
+  font-size:13.5px;line-height:1.6;color:#374151;
+}
+.driver-popover.demo-popover .driver-popover-arrow{color:#fff}
+
+/* iOS 한정: 키보드가 떠 있는 동안엔 어긋나는 스포트라이트(오버레이 구멍)·팝오버를 숨김.
+   클래스 토글은 demo.js가 visualViewport 축소를 보고 iOS에서만 수행 — 다른 OS/PC엔 영향 없음.
+   transition:none으로 즉시 사라지게(연속 입력 중 깜빡임 방지). */
+html.kb-hide-tour .driver-overlay,
+html.kb-hide-tour .driver-popover{
+  opacity:0 !important;pointer-events:none !important;transition:none !important;
+}
+
+/* ---- 적응형: 좁은 폭(모달 iframe 등)에서 세로 스택 ---- */
+@media(max-width:780px){
+  .workspace{grid-template-columns:1fr}
+  .workspace.rep-workspace{grid-template-columns:1fr} /* 5단계도 모바일에선 1단 스택 (미리보기가 우측 얇은 띠로 잘리던 문제) — .rep-workspace 단독 규칙이 소스 뒤라, 특이도를 높여 덮음 */
+  .preview-card{min-height:300px}
+}
+@media(max-width:430px){
+  .workspace{padding:12px;gap:12px}
+  .stepper{padding:10px 12px}
+}
+
+/* ---- 진입 인트로 ---- */
+.intro{
+  position:fixed;inset:0;z-index:200;background:var(--bg-color);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.intro.hidden{display:none}
+.intro-card{
+  background:var(--white);border:1px solid var(--border-color);border-radius:16px;
+  box-shadow:var(--shadow-md);max-width:440px;width:100%;padding:38px 30px;text-align:center;
+}
+.intro-logo{font-weight:800;color:var(--primary-color);font-size:15px;margin-bottom:18px}
+.intro-title{font-size:26px;font-weight:800;color:var(--text-main);margin-bottom:10px}
+.intro-desc{font-size:14.5px;color:var(--text-sub);line-height:1.65;margin-bottom:22px}
+.intro-notice{
+  font-size:13px;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;
+  border-radius:10px;padding:12px 14px;margin-bottom:24px;line-height:1.55;
+}
+.intro-start{
+  background:var(--primary-color);color:#fff;border:none;border-radius:10px;
+  padding:14px 30px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 6px -1px rgba(79,70,229,.3);transition:.2s;
+}
+.intro-start:hover{background:var(--primary-hover);transform:translateY(-1px)}
+/* 좁은 화면(모바일): PC 권장 안내를 더 눈에 띄게 */
+@media(max-width:780px){
+  .intro-notice{
+    background:#fef3c7;border-color:#fcd34d;color:#92400e;
+    font-size:14px;font-weight:700;
+  }
+  .intro-notice::before{content:"📱 ";}
+}
+
+/* ---- 2단계: 시험 결과 입력 ---- */
+.workspace.solo{display:block;padding:18px}
+.workspace.solo .panel{max-width:660px;gap:10px}
+.rslt-info{font-size:14px;color:var(--text-main)}
+.rslt-info b{color:var(--primary-color);font-weight:800;margin-left:6px}
+.rslt-row{display:flex;gap:12px;align-items:flex-start}
+.rslt-table-card{flex:1;padding:0;overflow:hidden}
+.rslt-table{width:100%;border-collapse:collapse;text-align:center;font-size:13px}
+.rslt-table th{background:#f8fafc;border:1px solid var(--border-color);padding:9px 4px;color:#555;font-weight:600}
+.rslt-table td{border:1px solid var(--border-color);padding:5px 4px}
+.rslt-table td.code{font-weight:600;color:#475569}
+.rslt-result-input{width:46px;height:30px;text-align:center;border:1px solid #e2e8f0;border-radius:4px;font-size:15px;font-weight:bold;color:var(--primary-color);font-family:inherit}
+.rslt-result-input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+.rslt-side{display:flex;flex-direction:column;gap:10px;width:96px;flex:none}
+.btn-side{padding:12px 6px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#475569;line-height:1.3}
+.btn-side:hover{background:#f8fafc}
+#btnResultSave{color:var(--primary-color);border-color:#c7d2fe}
+#btnResultSave:hover{background:#eef2ff}
+.rslt-legend{font-size:11px;color:var(--text-sub);background:#f8fafc;border:1px solid var(--border-color);border-radius:8px;padding:9px;line-height:1.55;text-align:left}
+.rslt-legend b{color:var(--text-main)}
+@media(max-width:600px){
+  .rslt-row{flex-direction:column}
+  .rslt-side{flex-direction:row;width:100%;flex-wrap:wrap}
+}
+
+/* ---- 3단계: 오답노트 ---- */
+.wrong-tbl .wrong-check{width:18px;height:18px;cursor:pointer;accent-color:var(--primary-color)}
+.wrong-tbl .wrong-check:disabled{cursor:not-allowed;opacity:.5}
+.wrong-tbl tr.empty-row td{height:34px;color:#cbd5e1}
+.wrong-search{display:flex;gap:8px;align-items:center;margin-bottom:6px;padding:12px}
+.demo-input{flex:0 1 220px;max-width:60%;padding:9px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-family:inherit;color:#111827;font-weight:600}
+.demo-input::placeholder{color:#cbd5e1;font-weight:400}
+.demo-input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+
+/* 입력값은 진한 검정 볼드, 안내(placeholder)는 연한 회색 */
+.editable input, .rslt-result-input{color:#111827;font-weight:700}
+.editable input::placeholder, .rslt-result-input::placeholder{color:#cbd5e1;font-weight:400}
+
+/* 하단 단계 이동 프레임 — 작업 화면 아래 별도 영역(서로 겹치지 않음).
+   z-index는 어둡게 덮는 오버레이(10000)보다 위, 튜토리얼 말풍선(1e9)보다 아래에 둬서
+   프레임은 또렷하게 보이되 말풍선을 가리지는 않게 함 */
+.step-nav{
+  position:sticky;bottom:0;z-index:500000;
+  display:flex;align-items:center;justify-content:center;gap:18px;
+  padding:10px 12px;background:#fff;border-top:1px solid var(--border-color);
+  box-shadow:0 -2px 8px rgba(0,0,0,.06);
+}
+.step-nav[hidden]{display:none}
+/* 튜토리얼 진행 중 Driver.js가 페이지 전체 pointer-events를 꺼버리므로(클릭 차단),
+   단계 이동 프레임만 예외로 다시 켜서 항상 클릭되게 함 */
+.step-nav, .step-nav .nav-btn, .step-nav .nav-label{pointer-events:auto!important}
+.nav-btn{
+  padding:7px 14px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;
+  font-size:13px;font-weight:600;color:#475569;cursor:pointer;font-family:inherit;
+}
+.nav-btn:hover:not(:disabled){background:#f8fafc;border-color:#94a3b8}
+.nav-btn:disabled{opacity:.4;cursor:default}
+.nav-label{font-size:13px;font-weight:700;color:var(--primary-color);min-width:52px;text-align:center}
+
+/* ---- 4단계: 숙제 입력 ---- */
+.hw-top{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.hw-top .demo-input{flex:0 0 140px;max-width:140px}
+.hw-date{padding:9px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-family:inherit;color:#111827;width:140px}
+.hw-date:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+.hw-tbl{width:100%;table-layout:fixed}
+.hw-tbl th{padding:8px 2px;font-size:12px}
+.hw-tbl td{padding:5px 3px}
+.hw-tbl .hw-total-th{color:var(--primary-color)}
+.hw-score{width:100%;height:30px;text-align:center;border:1px solid #e2e8f0;border-radius:4px;font-size:15px;font-weight:700;color:#111827;font-family:inherit;padding:0}
+.hw-score::placeholder{color:#cbd5e1;font-weight:400}
+.hw-score:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+#hwTotal{width:100%;height:30px;text-align:center;border:none;background:#f8fafc;font-weight:800;color:var(--primary-color);font-size:15px;font-family:inherit}
+
+/* ---- 5단계: 보고서 ---- */
+.rep-workspace{grid-template-columns:minmax(0,360px) minmax(0,1fr)}
+.rep-row{display:flex;gap:8px;align-items:center}
+.rep-row .demo-input{flex:1;max-width:none}
+.rep-row .btn-act{white-space:nowrap}
+.rep-comment{width:100%;height:92px;padding:10px;border:1px solid #d1d5db;border-radius:6px;resize:none;font-family:inherit;font-size:13px;color:#111827;line-height:1.55}
+.rep-comment:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+/* iOS Safari는 readonly/disabled 입력 텍스트를 회색·저대비로 렌더 → 예시 잠금·AI 다듬는 중에도 본문색(검정) 유지 */
+.rep-comment[readonly], .rep-comment:read-only, .rep-comment[disabled], .rep-comment:disabled{color:#111827;-webkit-text-fill-color:#111827;opacity:1}
+.rep-ai{flex:1;color:var(--primary-color);border-color:#c7d2fe;font-weight:700}
+#btnApplyComment{flex:1}
+#repSaveRow .btn-act{flex:1}
+.rep-dl{background:#555;color:#fff}
+/* 평가서 종이 (실제 make_report 톤 재현, A4 폭으로 만들어 미리보기 폭에 맞춰 축소) */
+.report-paper{
+  --rep-bg:#FFF8E9;--rep-highlight:#FFD3A0;--rep-gray-bg:#E9E1D4;--rep-dark:#443B36;
+  background:var(--rep-bg)!important;padding:36px 42px!important;color:var(--rep-dark);
+  min-height:auto!important;font-family:'Pretendard',sans-serif;
+}
+.report-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px}
+.report-title{font-size:30px;font-weight:900;border-bottom:4px solid var(--rep-dark);padding:0 30px 8px}
+.report-name-box{background:var(--rep-highlight);border:2px solid var(--rep-dark);padding:8px 26px;font-size:20px;font-weight:800}
+.report-table{width:100%;border-collapse:separate;border-spacing:0;border:2px solid var(--rep-dark);text-align:center;margin-bottom:22px;table-layout:fixed}
+.report-table th,.report-table td{border-right:1px solid var(--rep-dark);border-bottom:1px solid var(--rep-dark);padding:10px 4px;font-size:13px;font-weight:600;color:var(--rep-dark)}
+.report-table th{background:var(--rep-highlight);width:12%}
+.report-table tbody tr:last-child th,.report-table tbody tr:last-child td{border-bottom:none}
+#repDateRow td{background:var(--rep-gray-bg)}
+.report-chart-container{border:2px solid var(--rep-dark);background:var(--rep-bg);padding:14px;margin-bottom:22px;display:flex;justify-content:center}
+.rep-notice-table,.rep-foot-table{width:100%;border-collapse:collapse;table-layout:fixed;border:2px solid var(--rep-dark);background:var(--rep-bg)}
+.rep-notice-table{margin-bottom:22px}
+.rep-notice-h{background:var(--rep-highlight);padding:10px;font-weight:800;letter-spacing:4px;text-align:center;border-right:2px solid var(--rep-dark);border-bottom:2px solid var(--rep-dark);color:var(--rep-dark)}
+.rep-avg-h{background:var(--rep-highlight);width:110px;padding:10px;font-weight:800;text-align:center;border-bottom:2px solid var(--rep-dark);color:var(--rep-dark)}
+.rep-notice-c{padding:14px;text-align:left;font-size:13px;line-height:1.6;border-right:2px solid var(--rep-dark);white-space:pre-wrap;word-break:break-word;vertical-align:top;color:var(--rep-dark)}
+.rep-avg-c{padding:14px;text-align:center;font-size:22px;font-weight:800;color:var(--rep-dark)}
+.rep-foot-msg{padding:14px;border-right:2px solid var(--rep-dark);text-align:center;font-size:13px;font-weight:600;line-height:1.5;color:var(--rep-dark)}
+.rep-foot-logo{width:160px;padding:14px;text-align:center}
+
+/* ---- 6단계: 약점 분석 ---- */
+.wk-wrap{padding:18px;display:flex;flex-direction:column;gap:14px}
+.wk-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.wk-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.wk-controls .demo-input{flex:0 0 130px;max-width:130px}
+.wk-controls .hw-date{width:140px}
+.wk-tilde{color:#888}
+.wk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.wk-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.wk-card{background:#fff;border:1px solid var(--border-color);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.wk-head{padding:11px 14px;background:#f8fafc;border-bottom:1px solid var(--border-color);font-weight:700;font-size:14px;color:var(--text-main)}
+.wk-body{padding:8px 14px}
+.wk-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
+.wk-table th{padding:8px 4px;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600}
+.wk-table .wk-th-l{text-align:left}
+.wk-table .wk-th-rate{width:38%}
+.wk-table td{padding:9px 4px;border-bottom:1px solid #f1f5f9}
+.wk-uname{text-align:left;font-weight:700;color:var(--primary-color)}
+.wk-c{color:#10b981;font-weight:700}
+.wk-w{color:#ef4444;font-weight:700}
+.wk-bar{border:1px solid #e2e8f0;border-radius:4px;padding:4px 0;font-weight:700;color:#334155;font-size:12px}
+.wk-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px dashed #e2e8f0;font-size:13px}
+.wk-item:last-child{border-bottom:none}
+.wk-pnum{color:var(--primary-color);font-weight:700}
+.wk-pnum em{color:#64748b;font-weight:500;font-style:normal;font-size:12px}
+.wk-sub{color:#64748b;font-size:12px;white-space:nowrap}
+.wk-red{color:#ef4444;font-weight:700}
+.wk-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#94a3b8;border:1px dashed #cbd5e1;background:#f8fafc;padding:34px 16px;min-height:200px;box-shadow:none}
+.wk-soon-ic{font-size:30px;margin-bottom:8px}
+.wk-soon-t{font-weight:700;margin-bottom:4px;color:#94a3b8}
+.wk-soon p{font-size:13px;line-height:1.5}
+.wk-clinic{grid-column:1/-1;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:14px 16px;font-size:13.5px;color:#3730a3;line-height:1.55}
+@media(max-width:780px){.wk-grid{grid-template-columns:1fr}}
+
+/* ---- 7단계: 곱셈공식 랜덤 시험 ---- */
+.mf-wrap{padding:18px;display:flex;flex-direction:column;gap:14px}
+.mf-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff;border:1px solid var(--border-color);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow-sm)}
+.mf-title{font-weight:800;font-size:16px;margin-right:6px}
+.mf-spacer{flex:1}
+.mf-toggle{display:inline-flex;border:1px solid var(--border-color);border-radius:8px;overflow:hidden}
+.mf-toggle button{border:none;background:#fff;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-sub)}
+.mf-toggle button.on{background:var(--primary-color);color:#fff}
+.mf-sec{background:#fff;color:#475569;border:1px solid #cbd5e1}
+.mf-paper{padding:22px 26px}
+.mf-paper-title{text-align:center;font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text-main)}
+.mf-list{list-style:none;margin:0;padding:0;column-count:2;column-gap:36px}
+.mf-list li{display:flex;gap:8px;align-items:baseline;font-size:16px;margin-bottom:14px;break-inside:avoid}
+.mf-n{font-weight:700;color:var(--primary-color);min-width:20px}
+@media(max-width:700px){.mf-list{column-count:1}}
+
+/* ---- 완료 화면 ---- */
+.done-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 18px}
+.done-card{background:#fff;border:1px solid var(--border-color);border-radius:18px;box-shadow:var(--shadow-md);max-width:560px;width:100%;padding:42px 34px;text-align:center}
+.done-emoji{font-size:54px;margin-bottom:10px}
+.done-title{font-size:26px;font-weight:800;color:var(--text-main);margin-bottom:12px}
+.done-desc{font-size:14.5px;color:var(--text-sub);line-height:1.7;margin-bottom:22px}
+.done-steps{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px}
+.done-steps span{font-size:12.5px;font-weight:600;color:var(--primary-color);background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;padding:6px 12px}
+.done-kakao{display:inline-block;background:#FEE500;color:#3C1E1E;text-decoration:none;font-weight:800;font-size:16px;padding:15px 30px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.12);transition:.2s}
+.done-kakao:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.done-restart{display:block;margin:16px auto 0;background:none;border:none;color:var(--text-sub);font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline}
+
+/* ---- 평가서 하단 브랜드 텍스트(로고 대체) ---- */
+.rep-foot-brand{font-weight:800;font-size:18px;letter-spacing:.06em;color:#8A83BD;font-family:'Pretendard',sans-serif}
+
+/* ---- 6단계: 취약 문항 미리보기 모달 ---- */
+.wk-clickable{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.wk-clickable:hover{color:var(--primary-hover)}
+.prob-modal{position:fixed;inset:0;z-index:1000000005;display:flex;align-items:center;justify-content:center;background:rgba(17,24,39,.5);padding:20px}
+.prob-modal[hidden]{display:none}
+.prob-modal, .prob-modal *{pointer-events:auto!important}
+.prob-box{background:#fff;border-radius:12px;box-shadow:0 18px 50px -10px rgba(0,0,0,.4);max-width:520px;width:100%;padding:26px 28px;position:relative}
+.prob-close{position:absolute;top:8px;right:14px;background:none;border:none;font-size:24px;line-height:1;color:#94a3b8;cursor:pointer;font-family:inherit}
+.prob-close:hover{color:#475569}
+.prob-title{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--primary-color);margin-bottom:14px}
+.prob-body .prob-q{font-size:17px;line-height:1.7;color:#111827}
+
+/* ============================================================
+   iOS Safari auto-zoom 방지 — 입력 요소 폰트 16px (모바일/터치 전용)
+   font-size<16px인 input/select/textarea는 포커스 시 Safari가 페이지를
+   자동 확대(auto-zoom)함 → 좌표가 틀어져 Driver.js 말풍선·스포트라이트가
+   타깃에서 어긋난다. 모바일(≤780px 또는 coarse pointer)에서만 16px로 올려
+   확대 트리거를 없앤다. PC(>780px·fine pointer)는 기존 크기 유지(레이아웃 불변).
+   ============================================================ */
+@media (max-width: 780px), (pointer: coarse) {
+  input[type="text"], input[type="date"], input[type="number"], select, textarea,
+  .editable input, .readonly input, .rslt-result-input, .demo-input,
+  .hw-date, .hw-score, #hwTotal, .rep-comment {
+    font-size: 16px;
+  }
+  /* 출제 범위 표: 16px로 셀이 넘치지 않게 헤더·셀·입력 패딩을 줄여 한 줄 유지 */
+  .input-table th { padding: 9px 2px; }
+  .input-table td { padding: 5px 2px; }
+  .editable input { padding: 6px 3px; }
+  .table-scroll-area { overflow-x: auto; } /* 그래도 넘치면 표 영역 안에서만 가로 스크롤(페이지 스크롤 방지) */
+}

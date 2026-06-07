@@ -1,0 +1,30 @@
+# ── OS 찌꺼기 ──
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ── 에디터 / IDE ──
+.vscode/
+.idea/
+*.swp
+*~
+
+# ── 로그 ──
+*.log
+
+# ── 의존성 (현재 없지만 안전망) ──
+node_modules/
+
+# ── 환경변수 · 비밀값 (절대 커밋 금지) ──
+.env
+.env.*
+*.local
+secrets.*
+*.key
+*.pem
+
+# ── Claude 컨텍스트 / 로컬 설정 (개인 메모, 비공개) ──
+claude.md
+CLAUDE.md
+.claude/settings.local.json

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T-Studio 체험 · 시험지 만들기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+
+<!-- 진입 인트로 (시작하기를 눌러야 튜토리얼 시작) -->
+<div class="intro" id="intro">
+  <div class="intro-card">
+    <div class="intro-logo">🟡 정오수학 · Teacher's Studio</div>
+    <h1 class="intro-title">T-Studio 체험판</h1>
+    <p class="intro-desc">학생 데이터로 시험지를 자동으로 만드는 1단계 과정을<br>직접 따라 해볼 수 있어요.</p>
+    <div class="intro-notice" id="introNotice">💻 이 체험판은 <b>PC 화면</b>에 최적화되어 있어요. 가능하면 PC로 봐주세요.</div>
+    <button class="intro-start" id="startBtn">시작하기 →</button>
+  </div>
+</div>
+
+<!-- 진행 스테퍼 -->
+<div class="stepper">
+  <div class="stepper-label">
+    <span class="step-no" id="stepNo">1 / 7</span>
+    <span class="step-title" id="stepTitle">시험지 만들기</span>
+  </div>
+  <div class="stepper-track" id="stepperTrack"></div>
+</div>
+
+<!-- 화면 영역 (7단계를 JS로 갈아끼움 — 현재 1단계만 구현) -->
+<div class="screens">
+  <section class="screen active" data-screen="make-exam">
+    <div class="workspace">
+
+      <!-- 좌: 시험 기획 -->
+      <div class="panel left-panel">
+        <h2 class="panel-title">시험지 기획 및 제작</h2>
+
+        <h3 class="sub-title">1. 시험 기본 정보</h3>
+        <div class="card-box">
+          <div class="input-row">
+            <div class="input-item">
+              <label>학생 이름</label>
+              <input type="text" id="studentNameInput" placeholder="예: 홍길동" autocomplete="off">
+            </div>
+            <div class="input-item">
+              <label>시행 날짜</label>
+              <input type="date" id="examDate">
+            </div>
+          </div>
+          <div class="input-row exam-meta">
+            <div class="input-item"><label>시험 이름</label><input type="text" id="examTitleInput" value="Daily Test"></div>
+            <div class="input-item"><label>출제 방식</label>
+              <select><option>결과 반영 추출</option><option>무작위 추출</option></select></div>
+            <div class="input-item"><label>시험 종류</label>
+              <select><option>정규 시험</option><option>클리닉</option></select></div>
+          </div>
+        </div>
+
+        <div class="sub-row">
+          <h3 class="sub-title" style="margin:0;">2. 출제 범위</h3>
+          <div class="btn-row">
+            <button id="loadBtn" class="btn-act btn-load">📂 불러오기</button>
+            <button id="saveBtn" class="btn-act btn-save">💾 저장하기</button>
+          </div>
+        </div>
+
+        <div class="card-box table-card">
+          <div class="table-scroll-area">
+            <table class="input-table">
+              <thead>
+                <tr>
+                  <th class="sep-right">교재코드</th>
+                  <th>시작</th><th class="sep-right">끝</th>
+                  <th>A</th><th>B</th><th class="sep-right">C</th>
+                  <th>합계</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="sep-right total-label">총 합계 ▶</td>
+                  <td id="total-a">0</td><td id="total-b">0</td><td class="sep-right" id="total-c">0</td>
+                  <td id="grand-total">0</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <button id="createBtn" class="btn-act btn-print create-btn">✨ 3. 시험지 자동 생성</button>
+      </div>
+
+      <!-- 우: 미리보기 -->
+      <div class="panel right-panel">
+        <h2 class="panel-title">결과 미리보기 및 출력</h2>
+        <div class="preview-head">
+          <div class="tab-index-container">
+            <button class="tab-index-btn active">시험지</button>
+            <button class="tab-index-btn">답안지</button>
+            <button class="tab-index-btn">정답/해설</button>
+          </div>
+          <div class="print-btns" id="printBtns">
+            <button class="mini-btn" id="printExamBtn">🖨️ 시험지 인쇄</button>
+            <button class="mini-btn" id="printSheetBtn">🖨️ 답지 인쇄</button>
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="tab-content active" id="previewArea">
+            <div class="empty-guide">
+              <div class="guide-icon">📄</div>
+              <h3>시험지 미리보기</h3>
+              <p>왼쪽에서 범위를 입력한 후<br><strong>[시험지 자동 생성]</strong>을 눌러주세요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 1단계 완료 버튼 (생성 후 노출) -->
+    <div class="next-bar" id="nextBar" hidden>
+      <button class="next-btn" id="nextStepBtn">다음 단계로 (결과 입력) →</button>
+    </div>
+  </section>
+
+  <!-- 2단계: 시험 결과 입력 -->
+  <section class="screen" data-screen="result-input">
+    <div class="workspace solo">
+      <div class="panel">
+        <h2 class="panel-title">시험 결과 입력</h2>
+        <div class="rslt-info">📌 검색된 시험 정보 <b id="rsltExamInfo"></b></div>
+        <div class="rslt-row">
+          <div class="card-box rslt-table-card">
+            <table class="rslt-table">
+              <colgroup><col style="width:14%"><col style="width:34%"><col style="width:26%"><col style="width:26%"></colgroup>
+              <thead><tr><th>No</th><th>코드</th><th>번호</th><th>결과</th></tr></thead>
+              <tbody id="resultTableBody"></tbody>
+            </table>
+          </div>
+          <div class="rslt-side">
+            <button class="btn-side" id="btnResultSave">결과<br>저장</button>
+            <div class="rslt-legend"><b>입력 안내</b><br>0 틀림 · 1 맞음<br>2 부분 · 3 오류</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="next-bar" id="nextBar2" hidden>
+      <button class="next-btn" id="nextStep2Btn">다음 단계로 (오답노트) →</button>
+    </div>
+  </section>
+
+  <!-- 3단계: 오답노트 -->
+  <section class="screen" data-screen="wrong-note">
+    <div class="workspace">
+      <div class="panel left-panel">
+        <h2 class="panel-title">오답 노트 생성</h2>
+        <div class="card-box wrong-search">
+          <input type="text" id="wrongStudentName" class="demo-input" placeholder="학생 이름" autocomplete="off">
+          <button id="btnWrongLoad" class="btn-act btn-load">불러오기</button>
+        </div>
+        <div class="rslt-info">📌 <b id="wrongInfo">학생을 불러오면 2단계 결과의 오답이 표시됩니다</b></div>
+        <div class="rslt-row">
+          <div class="card-box rslt-table-card">
+            <table class="rslt-table wrong-tbl">
+              <colgroup><col style="width:14%"><col style="width:36%"><col style="width:28%"><col style="width:22%"></colgroup>
+              <thead><tr><th>No</th><th>코드</th><th>번호</th><th>선택</th></tr></thead>
+              <tbody id="wrongTableBody"></tbody>
+            </table>
+          </div>
+          <div class="rslt-side">
+            <button class="btn-side" id="btnCleanWrong">문항<br>정리</button>
+            <button class="btn-side" id="btnWrongSave">저장</button>
+            <div class="rslt-legend"><b>안내</b><br>고쳐온 문항을 체크하고 <b>문항 정리</b>로 목록에서 빼요.</div>
+          </div>
+        </div>
+        <button id="btnWrongPreview" class="btn-act btn-print create-btn">✨ 오답노트 미리보기 생성</button>
+      </div>
+      <div class="panel right-panel">
+        <h2 class="panel-title">미리보기</h2>
+        <div class="preview-head">
+          <div class="tab-index-container"><button class="tab-index-btn active">오답노트</button></div>
+          <div class="print-btns" id="wrongPrintBtns">
+            <button class="mini-btn" id="printWrongBtn">🖨️ 오답노트 인쇄</button>
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="tab-content active" id="wrongPreviewArea">
+            <div class="empty-guide">
+              <div class="guide-icon">📄</div><h3>오답노트 미리보기</h3>
+              <p>왼쪽에서 정리한 뒤<br><strong>[미리보기 생성]</strong>을 눌러주세요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="next-bar" id="nextBar3" hidden>
+      <button class="next-btn" id="nextStep3Btn">다음 단계로 (숙제 입력) →</button>
+    </div>
+  </section>
+
+  <!-- 4단계: 숙제 입력 -->
+  <section class="screen" data-screen="homework">
+    <div class="workspace solo">
+      <div class="panel">
+        <h2 class="panel-title">숙제 입력</h2>
+        <div class="rslt-info">📌 숙제 수행도를 항목당 <b>0~5점</b>으로 입력하면 점수가 자동 환산돼요</div>
+        <div class="card-box hw-card">
+          <div class="hw-top">
+            <input type="text" id="hwName" class="demo-input" placeholder="학생 이름" autocomplete="off">
+            <input type="date" id="hwDate" class="hw-date">
+            <button id="btnHwSubmit" class="btn-act btn-save">숙제 등록</button>
+          </div>
+          <table class="rslt-table hw-tbl">
+            <thead><tr>
+              <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+              <th class="hw-total-th">점수</th>
+            </tr></thead>
+            <tbody id="hwTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="next-bar" id="nextBar4" hidden>
+      <button class="next-btn" id="nextStep4Btn">다음 단계로 (보고서) →</button>
+    </div>
+  </section>
+
+  <!-- 5단계: 보고서 -->
+  <section class="screen" data-screen="report">
+    <div class="workspace rep-workspace">
+      <div class="panel rep-left">
+        <h2 class="panel-title">보고서 설정</h2>
+        <div class="card-box">
+          <div class="rep-row">
+            <input type="text" id="repStudentName" class="demo-input" placeholder="학생 이름" autocomplete="off">
+            <button id="btnFetchData" class="btn-act btn-print">📊 데이터 불러오기</button>
+          </div>
+        </div>
+        <h2 class="panel-title">안내 사항</h2>
+        <div class="card-box" id="repCommentCard">
+          <textarea id="commentInput" class="rep-comment" placeholder="평가서 하단에 들어갈 안내 사항을 입력하세요."></textarea>
+          <div class="rep-row" style="margin-top:8px">
+            <button id="btnAiAssist" class="btn-act btn-load rep-ai">🤖 AI 도움받기</button>
+            <button id="btnApplyComment" class="btn-act btn-load">적용하기</button>
+          </div>
+        </div>
+        <h2 class="panel-title">저장 및 다운로드</h2>
+        <div class="card-box">
+          <div class="rep-row" id="repSaveRow">
+            <button id="btnSaveReport" class="btn-act btn-save">💾 보고서 저장</button>
+            <button id="btnDownloadImg" class="btn-act rep-dl">🖼️ 이미지 저장</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel rep-right">
+        <h2 class="panel-title">보고서 미리보기</h2>
+        <div class="preview-card">
+          <div class="tab-content active" id="reportArea">
+            <div class="empty-guide" id="reportEmpty">
+              <div class="guide-icon">📊</div><h3>보고서 미리보기</h3>
+              <p>학생 이름을 입력하고<br><strong>[데이터 불러오기]</strong>를 눌러주세요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="next-bar" id="nextBar5" hidden>
+      <button class="next-btn" id="nextStep5Btn">다음 단계로 (약점 분석) →</button>
+    </div>
+  </section>
+
+  <!-- 6단계: 약점 분석 -->
+  <section class="screen" data-screen="weakness">
+    <div class="wk-wrap">
+      <div class="card-box wk-top">
+        <h2 class="panel-title" style="margin:0">취약점 분석</h2>
+        <div class="wk-controls">
+          <input type="text" id="wkStudentName" class="demo-input" placeholder="학생 이름" autocomplete="off">
+          <input type="date" id="wkStart" class="hw-date">
+          <span class="wk-tilde">~</span>
+          <input type="date" id="wkEnd" class="hw-date">
+          <button id="btnWkAnalyze" class="btn-act btn-print">🔍 조회</button>
+        </div>
+      </div>
+      <div id="wkResult">
+        <div class="empty-guide" id="wkEmpty">
+          <div class="guide-icon">📊</div><h3>취약점 분석</h3>
+          <p>학생 이름과 기간을 정하고<br><strong>[조회]</strong>를 눌러주세요.</p>
+        </div>
+      </div>
+    </div>
+    <div class="next-bar" id="nextBar6" hidden>
+      <button class="next-btn" id="nextStep6Btn">다음 단계로 (추가 기능) →</button>
+    </div>
+  </section>
+
+  <!-- 7단계: 추가 기능 (곱셈공식 랜덤 시험) -->
+  <section class="screen" data-screen="tools">
+    <div class="mf-wrap">
+      <div class="mf-toolbar">
+        <span class="mf-title">🧮 곱셈공식 랜덤 시험</span>
+        <button class="btn-act btn-print" id="btnShuffle">🔀 랜덤 섞기</button>
+        <span class="mf-toggle" id="mfToggle">
+          <button data-v="q" class="on">문제 보기</button>
+          <button data-v="a">정답 보기</button>
+        </span>
+        <span class="mf-spacer"></span>
+        <button class="btn-act mf-sec" id="btnMfPrint">🖨 인쇄</button>
+      </div>
+      <div class="card-box mf-paper" id="mfPaper"></div>
+    </div>
+    <div class="next-bar" id="nextBar7">
+      <button class="next-btn" id="btnFinish">🎉 체험 완료</button>
+    </div>
+  </section>
+
+  <!-- 완료 화면 -->
+  <section class="screen" data-screen="done">
+    <div class="done-wrap">
+      <div class="done-card">
+        <div class="done-emoji">🎉</div>
+        <h1 class="done-title">체험을 모두 마쳤어요!</h1>
+        <p class="done-desc">시험지 제작부터 채점·오답노트·숙제·보고서·약점 분석·수업 도구까지,<br>T-Studio의 전체 흐름을 직접 따라가 보셨어요.</p>
+        <div class="done-steps">
+          <span>① 시험지 제작</span><span>② 결과 입력</span><span>③ 오답노트</span><span>④ 숙제</span><span>⑤ 보고서</span><span>⑥ 약점 분석</span><span>⑦ 수업 도구</span>
+        </div>
+        <a class="done-kakao" id="doneKakao" href="https://open.kakao.com/o/skL5yp0h" target="_blank" rel="noopener">💬 카카오톡으로 문의하기</a>
+        <button class="done-restart" id="btnRestart">처음부터 다시 보기 ↺</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="step-nav" id="stepNav" hidden>
+  <button class="nav-btn" id="navPrev">◀ 이전 단계</button>
+  <span class="nav-label" id="navLabel">1 / 7</span>
+  <button class="nav-btn" id="navNext">다음 단계 ▶</button>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<!-- 취약 문항 미리보기 모달 -->
+<div class="prob-modal" id="probModal" hidden>
+  <div class="prob-box">
+    <button class="prob-close" id="probClose" aria-label="닫기">×</button>
+    <div class="prob-title" id="probTitle"></div>
+    <div class="prob-body" id="probBody"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+<script src="js/steps.js"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>
